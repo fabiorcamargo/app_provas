@@ -1,7 +1,7 @@
 {
     "name": "meu_primeiro_app",
     "short_name": "meu_primeiro_app",
-    "start_url": "/",
+    "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",

@@ -21,7 +21,6 @@
   <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="meu_primeiro_app">
@@ -35,51 +34,5 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
-  <script>
-    // Try to request persistent storage (where supported) to reduce the chance of
-    // IndexedDB/local caches being evicted by the browser under storage pressure.
-    // Note: iOS Safari does not currently support navigator.storage.persist.
-    (function requestPersistentStorage() {
-      if (navigator.storage && navigator.storage.persist) {
-        try {
-          navigator.storage.persisted()
-            .then((alreadyPersisted) => {
-              if (alreadyPersisted) {
-                console.log('Armazenamento já é persistente.');
-                return;
-              }
-              return navigator.storage.persist()
-                .then((granted) => {
-                  console.log(
-                    granted
-                      ? 'Armazenamento persistente garantido!'
-                      : 'Armazenamento ainda é volátil (pode ser apagado).'
-                  );
-                });
-            })
-            .catch(() => {});
-        } catch (_) {}
-      }
-    })();
-
-    // Prefetch SQLite WASM and worker once the first frame renders to warm the PWA cache.
-    // This helps iOS (Safari/PWA) work offline after the initial online load.
-    window.addEventListener('flutter-first-frame', () => {
-      try {
-        const base = document.baseURI;
-        const urls = [
-          new URL('sqlite3.wasm', base),
-          new URL('sqflite_sw.js', base),
-        ];
-        for (const url of urls) {
-          fetch(url.toString()).catch(() => {});
-        }
-        // Note: We no longer trigger 'downloadOffline' because some builds may
-        // accidentally include entries that don't exist on the server (e.g., .git/*),
-        // causing Cache.addAll() to fail. The prefetch above warms the critical
-        // resources, and the Flutter service worker will lazily cache others.
-      } catch (_) {}
-    });
-  </script>
 </body>
 </html>

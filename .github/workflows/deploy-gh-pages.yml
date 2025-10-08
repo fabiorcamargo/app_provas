@@ -34,23 +34,7 @@ jobs:
           fi
 
       - name: Build Flutter Web
-        run: flutter build web --release --base-href "$BASE_HREF" --no-web-resources-cdn
-
-      - name: Patch web manifest for GitHub Pages scope (start_url & scope)
-        run: |
-          BASE="$BASE_HREF"
-          case "$BASE" in
-            /*) ;;
-            *) BASE="/$BASE" ;;
-          esac
-          case "$BASE" in
-            */) ;;
-            *) BASE="$BASE/" ;;
-          esac
-          jq --arg base "$BASE" '.start_url=($base + "index.html") | .scope=$base' \
-            build/web/manifest.json > build/web/manifest.tmp.json
-          mv build/web/manifest.tmp.json build/web/manifest.json
-          echo "Patched manifest.json with start_url=${BASE}index.html scope=$BASE"
+        run: flutter build web --release --base-href "$BASE_HREF"
 
       - name: Add SPA fallback and disable Jekyll
         run: |
