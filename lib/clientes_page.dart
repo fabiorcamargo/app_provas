@@ -23,6 +23,95 @@ class _ClientesPageState extends State<ClientesPage> {
     _loadClientes();
   }
 
+  Future<void> _editCliente(Cliente cliente) async {
+    final nomeCtrl = TextEditingController(text: cliente.nome);
+    final tel1Ctrl = TextEditingController(text: cliente.telefone1);
+    final tel2Ctrl = TextEditingController(text: cliente.telefone2);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar cliente'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nomeCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Nome',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: tel1Ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Telefone 1',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.phone,
+              inputFormatters: [BRPhoneInputFormatter()],
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: tel2Ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Telefone 2',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.phone,
+              inputFormatters: [BRPhoneInputFormatter()],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      final nome = nomeCtrl.text.trim();
+      if (nome.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Informe ao menos o nome.')),
+        );
+        return;
+      }
+
+      String telefone1 = tel1Ctrl.text.replaceAll(RegExp(r'[^0-9]'), '');
+      String telefone2 = tel2Ctrl.text.replaceAll(RegExp(r'[^0-9]'), '');
+      if (telefone1.length > 11) telefone1 = telefone1.substring(0, 11);
+      if (telefone2.length > 11) telefone2 = telefone2.substring(0, 11);
+
+      final atualizado = Cliente(
+        id: cliente.id,
+        uuid: cliente.uuid,
+        acaoUuid: cliente.acaoUuid,
+        nome: nome,
+        telefone1: telefone1,
+        telefone2: telefone2,
+        sincronizado: false, // marca como pendente de sincronização
+        usuarioUuid: cliente.usuarioUuid,
+      );
+
+      await dbHelper.updateCliente(atualizado);
+      await _loadClientes();
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cliente atualizado.')));
+    }
+  }
+
   Future<void> _loadClientes() async {
     final lista = await dbHelper.getClientesByAcao(widget.acao.uuid);
     setState(() {
@@ -210,35 +299,56 @@ class _ClientesPageState extends State<ClientesPage> {
                             subtitle: Text(
                               'Tel1: ${cliente.telefone1} | Tel2: ${cliente.telefone2}',
                             ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Confirmar exclusão'),
-                                    content: const Text(
-                                      'Deseja realmente excluir este cliente?',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(false),
-                                        child: const Text('Cancelar'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(true),
-                                        child: const Text('Excluir'),
-                                      ),
-                                    ],
+                            onTap: () => _editCliente(cliente),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blueGrey,
                                   ),
-                                );
-                                if (confirm == true) {
-                                  await dbHelper.deleteCliente(cliente.uuid);
-                                  await _loadClientes();
-                                }
-                              },
+                                  tooltip: 'Editar',
+                                  onPressed: () => _editCliente(cliente),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  tooltip: 'Excluir',
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Confirmar exclusão'),
+                                        content: const Text(
+                                          'Deseja realmente excluir este cliente?',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(
+                                              context,
+                                            ).pop(false),
+                                            child: const Text('Cancelar'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(true),
+                                            child: const Text('Excluir'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await dbHelper.deleteCliente(
+                                        cliente.uuid,
+                                      );
+                                      await _loadClientes();
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         );

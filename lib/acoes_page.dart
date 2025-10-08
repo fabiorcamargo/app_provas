@@ -132,6 +132,14 @@ class _AcoesPageState extends State<AcoesPage> {
                                           ? ' • dados não sincronizados'
                                           : ''),
                                 ),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ClientesPage(acao: acao),
+                                    ),
+                                  );
+                                },
                                 trailing: IconButton(
                                   icon: const Icon(Icons.people),
                                   tooltip: 'Ver clientes',
