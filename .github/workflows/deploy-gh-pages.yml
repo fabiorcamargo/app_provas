@@ -38,23 +38,19 @@ jobs:
 
       - name: Patch web manifest for GitHub Pages scope (start_url & scope)
         run: |
-          python3 - << 'PY'
-          import json, os
-          p = 'build/web/manifest.json'
-          with open(p, 'r', encoding='utf-8') as f:
-              data = json.load(f)
-          base = os.environ.get('BASE_HREF', '/')
-          # Ensure base starts & ends with '/'
-          if not base.startswith('/'):
-              base = '/' + base
-          if not base.endswith('/'):
-              base = base + '/'
-          data['start_url'] = base
-          data['scope'] = base
-          with open(p, 'w', encoding='utf-8') as f:
-              json.dump(data, f, ensure_ascii=False, indent=2)
-          print('Patched manifest.json with start_url=', base, 'scope=', base)
-          PY
+          BASE="$BASE_HREF"
+          case "$BASE" in
+            /*) ;;
+            *) BASE="/$BASE" ;;
+          esac
+          case "$BASE" in
+            */) ;;
+            *) BASE="$BASE/" ;;
+          esac
+          jq --arg base "$BASE" '.start_url=($base + "index.html") | .scope=$base' \
+            build/web/manifest.json > build/web/manifest.tmp.json
+          mv build/web/manifest.tmp.json build/web/manifest.json
+          echo "Patched manifest.json with start_url=${BASE}index.html scope=$BASE"
 
       - name: Add SPA fallback and disable Jekyll
         run: |

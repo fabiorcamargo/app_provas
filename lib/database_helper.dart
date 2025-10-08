@@ -354,6 +354,7 @@ class DatabaseHelper {
       'clientes',
       where: 'acaoUuid = ?',
       whereArgs: [acaoUuid],
+      orderBy: 'id DESC', // mais recentes primeiro
     );
     return maps.map((map) => Cliente.fromMap(map)).toList();
   }
