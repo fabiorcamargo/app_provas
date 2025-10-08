@@ -34,7 +34,7 @@ jobs:
           fi
 
       - name: Build Flutter Web
-        run: flutter build web --release --base-href "$BASE_HREF"
+        run: flutter build web --release --base-href "$BASE_HREF" --no-web-resources-cdn
 
       - name: Patch web manifest for GitHub Pages scope (start_url & scope)
         run: |
