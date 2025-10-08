@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "683326687369",
+    "project_id": "profissionaliza-ead-sales",
+    "storage_bucket": "profissionaliza-ead-sales.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683326687369:android:edcfd62e02eb6577b0de58",
+        "android_client_info": {
+          "package_name": "com.profissionalizaead.appprovas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuvnBwnLVr9VyaLc_nO2wKWS7dgngpHeQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
