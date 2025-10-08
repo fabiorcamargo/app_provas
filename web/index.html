@@ -34,5 +34,17 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Register the sqflite service worker to enable SQLite in Flutter Web
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('flutter-first-frame', function () {
+        // Use document.baseURI so registration works when the app is served under a subpath
+        const swUrl = new URL('sqflite_sw.js', document.baseURI);
+        navigator.serviceWorker.register(swUrl).catch((e) => {
+          console.error('Failed to register sqflite service worker', e);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

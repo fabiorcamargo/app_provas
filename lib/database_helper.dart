@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/foundation.dart';
 
 class Usuario {
   int? id;
@@ -189,10 +190,16 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDb() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'cidades.db');
+    // No Web usamos apenas um nome de arquivo; no mobile usamos o caminho padrão
+    final String dbFilePath;
+    if (kIsWeb) {
+      dbFilePath = 'cidades.db';
+    } else {
+      final dbPath = await getDatabasesPath();
+      dbFilePath = join(dbPath, 'cidades.db');
+    }
     return await openDatabase(
-      path,
+      dbFilePath,
       version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,

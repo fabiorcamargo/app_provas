@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'cidades_page.dart';
 import 'login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart' as sqflite_ffi_web;
+import 'package:sqflite/sqflite.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // Habilita SQLite no Web usando WASM/IndexedDB
+  if (kIsWeb) {
+    databaseFactory = sqflite_ffi_web.databaseFactoryFfiWeb;
+  }
   runApp(const MyApp());
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'br_phone_input_formatter.dart';
+import 'package:flutter/services.dart';
 
 class UsuarioPage extends StatefulWidget {
   final Usuario? usuario;
@@ -97,8 +98,14 @@ class _UsuarioPageState extends State<UsuarioPage> {
               TextFormField(
                 controller: _telefoneController,
                 decoration: const InputDecoration(labelText: 'Telefone'),
-                keyboardType: TextInputType.phone,
-                inputFormatters: [BRPhoneInputFormatter()],
+                keyboardType: const TextInputType.numberWithOptions(
+                  signed: false,
+                  decimal: false,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  BRPhoneInputFormatter(),
+                ],
               ),
               DropdownButtonFormField<String>(
                 value: _role,

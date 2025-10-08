@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'br_phone_input_formatter.dart';
+import 'package:flutter/services.dart';
 
 class ClientesPage extends StatefulWidget {
   final Acao acao;
@@ -49,8 +50,14 @@ class _ClientesPageState extends State<ClientesPage> {
                 labelText: 'Telefone 1',
                 border: OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [BRPhoneInputFormatter()],
+              keyboardType: const TextInputType.numberWithOptions(
+                signed: false,
+                decimal: false,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                BRPhoneInputFormatter(),
+              ],
             ),
             const SizedBox(height: 12),
             TextField(
@@ -59,8 +66,14 @@ class _ClientesPageState extends State<ClientesPage> {
                 labelText: 'Telefone 2',
                 border: OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [BRPhoneInputFormatter()],
+              keyboardType: const TextInputType.numberWithOptions(
+                signed: false,
+                decimal: false,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                BRPhoneInputFormatter(),
+              ],
             ),
           ],
         ),
@@ -239,8 +252,14 @@ class _ClientesPageState extends State<ClientesPage> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.phone),
                       ),
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [BRPhoneInputFormatter()],
+                      keyboardType: const TextInputType.numberWithOptions(
+                        signed: false,
+                        decimal: false,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        BRPhoneInputFormatter(),
+                      ],
                     ),
                     const SizedBox(height: 12),
                     TextField(
@@ -250,8 +269,14 @@ class _ClientesPageState extends State<ClientesPage> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.phone_android),
                       ),
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [BRPhoneInputFormatter()],
+                      keyboardType: const TextInputType.numberWithOptions(
+                        signed: false,
+                        decimal: false,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        BRPhoneInputFormatter(),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     SizedBox(
