@@ -10,7 +10,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Habilita SQLite no Web usando WASM/IndexedDB
   if (kIsWeb) {
-    databaseFactory = sqflite_ffi_web.databaseFactoryFfiWeb;
+    // Em ambientes servidos sob subpasta (ex.: GitHub Pages /app_provas/),
+    // garanta que os caminhos do worker e do wasm sejam absolutos usando a base atual.
+    final base = Uri.base; // respeita a <base href> gerada no build
+    final options = sqflite_ffi_web.SqfliteFfiWebOptions(
+      sharedWorkerUri: base.resolve('sqflite_sw.js'),
+      sqlite3WasmUri: base.resolve('sqlite3.wasm'),
+    );
+    databaseFactory = sqflite_ffi_web.createDatabaseFactoryFfiWeb(
+      options: options,
+    );
   }
   runApp(const MyApp());
 }
