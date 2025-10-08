@@ -50,7 +50,7 @@
         // Ask Flutter's service worker to cache all resources now.
         if ('serviceWorker' in navigator) {
           navigator.serviceWorker.getRegistration().then((reg) => {
-            reg?.active?.postMessage({ type: 'downloadOffline' });
+            reg?.active?.postMessage('downloadOffline');
           }).catch(() => {});
         }
       } catch (_) {}
