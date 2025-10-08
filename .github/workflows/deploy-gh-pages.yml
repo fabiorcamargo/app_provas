@@ -1,0 +1,49 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate sqflite web assets (worker + wasm)
+        run: dart run sqflite_common_ffi_web:setup
+
+      - name: Compute base href
+        run: |
+          if [[ "${{ github.event.repository.name }}" == *.github.io ]]; then
+            echo "BASE_HREF=/" >> $GITHUB_ENV
+          else
+            echo "BASE_HREF=/${{ github.event.repository.name }}/" >> $GITHUB_ENV
+          fi
+
+      - name: Build Flutter Web
+        run: flutter build web --release --base-href "$BASE_HREF"
+
+      - name: Add SPA fallback and disable Jekyll
+        run: |
+          cp build/web/index.html build/web/404.html
+          touch build/web/.nojekyll
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/web
+          force_orphan: true
