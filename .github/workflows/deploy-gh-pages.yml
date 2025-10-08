@@ -36,6 +36,26 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --release --base-href "$BASE_HREF"
 
+      - name: Patch web manifest for GitHub Pages scope (start_url & scope)
+        run: |
+          python3 - << 'PY'
+          import json, os
+          p = 'build/web/manifest.json'
+          with open(p, 'r', encoding='utf-8') as f:
+              data = json.load(f)
+          base = os.environ.get('BASE_HREF', '/')
+          # Ensure base starts & ends with '/'
+          if not base.startswith('/'):
+              base = '/' + base
+          if not base.endswith('/'):
+              base = base + '/'
+          data['start_url'] = base
+          data['scope'] = base
+          with open(p, 'w', encoding='utf-8') as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
+          print('Patched manifest.json with start_url=', base, 'scope=', base)
+          PY
+
       - name: Add SPA fallback and disable Jekyll
         run: |
           cp build/web/index.html build/web/404.html

@@ -34,5 +34,21 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Prefetch SQLite WASM and worker once the first frame renders to warm the PWA cache.
+    // This helps iOS (Safari/PWA) work offline after the initial online load.
+    window.addEventListener('flutter-first-frame', () => {
+      try {
+        const base = document.baseURI;
+        const urls = [
+          new URL('sqlite3.wasm', base),
+          new URL('sqflite_sw.js', base),
+        ];
+        for (const url of urls) {
+          fetch(url.toString()).catch(() => {});
+        }
+      } catch (_) {}
+    });
+  </script>
 </body>
 </html>
